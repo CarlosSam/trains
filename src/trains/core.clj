@@ -26,10 +26,10 @@
 (defn find-trips [start end max distances]
   ; acc = stops s = start, e = end, m = max; d = distances
   (letfn [(find-trips-acc [acc s e m d]
-            (cond
-              (= s e) #{(conj acc e)}
-              (= m 0) nil
-              :else (apply union (filter #(seq %)
-                                         (map #(find-trips-acc (conj acc s) % e (dec m) (dissoc d s))
-                                               (keys (s d)))))))]
+              (apply union (filter #(seq %)
+                                   (cons (when (= s e)
+                                               #{(conj acc e)})
+                                         (when (not= m 0)
+                                               (map #(find-trips-acc (conj acc s) % e (dec m) d)
+                                                    (keys (s d))))))))]
     (find-trips-acc [] start end max distances)))
