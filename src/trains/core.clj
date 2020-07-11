@@ -33,3 +33,15 @@
                                                (map #(find-trips-acc (conj acc s) % e (dec m) d)
                                                     (keys (s d))))))))]
     (find-trips-acc [] start end max distances)))
+
+; same as above but with exactly stops
+(defn find-trips-exactly [start end max distances]
+  ; acc = stops s = start, e = end, m = max; d = distances
+  (letfn [(find-trips-acc [acc s e m d]
+             (if (= m 0)
+                 (when (= s e)
+                       #{(conj acc e)})
+                 (apply union
+                        (map #(find-trips-acc (conj acc s) % e (dec m) d)
+                             (keys (s d))))))]
+    (find-trips-acc [] start end max distances)))
