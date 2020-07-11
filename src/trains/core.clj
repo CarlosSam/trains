@@ -1,4 +1,5 @@
 (ns trains.core
+  (:require [clojure.set :use union])
   (:gen-class))
 
 (defn -main
@@ -26,9 +27,9 @@
   ; acc = stops s = start, e = end, m = max; d = distances
   (letfn [(find-trips-acc [acc s e m d]
             (cond
-              (= s e) (conj acc e)
+              (= s e) #{(conj acc e)}
               (= m 0) nil
-              :else (set (remove #(nil? %)
-                                  (map #(find-trips-acc (conj acc s) % e (dec m) (dissoc d s))
-                                        (keys (s d)))))))]
+              :else (apply union (filter #(seq %)
+                                         (map #(find-trips-acc (conj acc s) % e (dec m) (dissoc d s))
+                                               (keys (s d)))))))]
     (find-trips-acc [] start end max distances)))
