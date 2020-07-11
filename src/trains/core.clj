@@ -16,3 +16,19 @@
               0
               routes)
       (catch NullPointerException e nil))))
+
+
+; start city
+; end city
+; maximum stops
+; distances is the same as before
+(defn find-trips [start end max distances]
+  ; acc = stops s = start, e = end, m = max; d = distances
+  (letfn [(find-trips-acc [acc s e m d]
+            (cond
+              (= s e) (conj acc e)
+              (= m 0) nil
+              :else (set (remove #(nil? %)
+                                  (map #(find-trips-acc (conj acc s) % e (dec m) (dissoc d s))
+                                        (keys (s d)))))))]
+    (find-trips-acc [] start end max distances)))
