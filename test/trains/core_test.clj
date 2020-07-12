@@ -15,4 +15,5 @@
  (testing "shortest-route"
     (is (= nil (shortest-route :x :y {:a {:b 4}})))
     (is (= nil (shortest-route :a :y {:a {:b 4}})))
-    (is (= 4 (shortest-route :a :b {:a {:b 4}})))))
+    (is (= 4 (shortest-route :a :b {:a {:b 4}})))
+    (is (= 7 (shortest-route :a :d {:a {:b 4 :c 10} :b {:c 1 :d 14} :c {:a 2 :d 2} :d {:a 3}})))))
