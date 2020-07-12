@@ -24,3 +24,16 @@
     (is (= #{} (find-routes :a :y 10 {:a {:b 4}})))
     (is (= #{[:a :b]} (find-routes :a :b 10 {:a {:b 4}})))
     (is (= #{[:a :c][:a :b :c][:a :c :d :a :c][:a :c :d :a :b :c][:a :b :c :d :a :c]} (find-routes :a :c 24 {:a {:b 4 :c 3} :b {:c 8} :c {:d 6} :d {:a 2 :b 8}})))))
+
+(deftest expected-test
+  (let [distances {:a {:b 5, :d 5, :e 7}, :b {:c 4}, :c {:d 8, :e 2}, :d {:c 8, :e 6}, :e {:b 3}}]
+    (is (= 9 (calculate-distance [:a :b :c] distances)))
+    (is (= 5 (calculate-distance [:a :d] distances)))
+    (is (= 13 (calculate-distance [:a :d :c] distances)))
+    (is (= 22 (calculate-distance [:a :e :b :c :d] distances)))
+    (is (= nil (calculate-distance [:a :e :d] distances)))
+    (is (= 2 (count (find-trips :c :c 3 distances))))
+    (is (= 3 (count (find-trips-exactly :a :c 4 distances))))
+    (is (= 9 (shortest-route :a :c distances)))
+    (is (= 9 (shortest-route :b :b distances)))
+    (is (= #{[:c :d :c][:c :e :b :c][:c :e :b :c :d :c][:c :d :c :e :b :c][:c :d :e :b :c][:c :e :b :c :e :b :c][:c :e :b :c :e :b :c :e :b :c]}(find-routes :c :c 30 distances)))))
