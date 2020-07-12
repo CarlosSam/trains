@@ -45,3 +45,18 @@
                         (map #(find-trips-acc (conj acc s) % e (dec m) d)
                              (keys (s d))))))]
     (find-trips-acc [] start end max distances)))
+
+; returns the length of the shortest route
+(defn shortest-route [start end distances]
+  ; len: subtotal of length, s = start, e = end, d = distances
+  (letfn [(shortest-route-acc [len s e d]
+            (when-let [next-cities (keys (s d))]
+              (let [subresults (remove nil?
+                                      (map #(when-let [inc-len (get-in d [s %])]
+                                                     (if (= % e)
+                                                         (+ len inc-len)
+                                                         (shortest-route-acc (+ len inc-len) % e (dissoc d s))))
+                                           next-cities))]
+                (when (seq subresults)
+                   (apply min subresults)))))]
+    (shortest-route-acc 0 start end distances)))

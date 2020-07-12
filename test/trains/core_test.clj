@@ -11,4 +11,8 @@
     (is (= #{[:a :b]} (find-trips :a :b 1 {:a {:b 4 :c 7}})))
     (is (= #{[:a :c]} (find-trips :a :c 1 {:a {:b 4 :c 7} :b {:c 8}})))
     (is (= #{[:a :b :d] [:a :b :d :b :d] [:a :b :c :d] [:a :c :a :b :d] [:a :c :d] [:a :c :d :b :d] [:a :c :a :c :d]} (find-trips :a :d 4 {:a {:b 4 :c 7} :b {:c 8 :d 2} :c {:a 9 :d 2} :d {:b 4}})))
-    (is (= #{[:a :b :d :b :d][:a :c :a :b :d][:a :c :d :b :d][:a :c :a :c :d]} (find-trips-exactly :a :d 4 {:a {:b 4 :c 7} :b {:c 8 :d 2} :c {:a 9 :d 2} :d {:b 4}})))))
+    (is (= #{[:a :b :d :b :d][:a :c :a :b :d][:a :c :d :b :d][:a :c :a :c :d]} (find-trips-exactly :a :d 4 {:a {:b 4 :c 7} :b {:c 8 :d 2} :c {:a 9 :d 2} :d {:b 4}}))))
+ (testing "shortest-route"
+    (is (= nil (shortest-route :x :y {:a {:b 4}})))
+    (is (= nil (shortest-route :a :y {:a {:b 4}})))
+    (is (= 4 (shortest-route :a :b {:a {:b 4}})))))
