@@ -22,4 +22,5 @@
  (testing "find routes"
     (is (= #{} (find-routes :x :y 10 {:a {:b 4}})))
     (is (= #{} (find-routes :a :y 10 {:a {:b 4}})))
-    (is (= #{[:a :b]} (find-routes :a :b 10 {:a {:b 4}})))))
+    (is (= #{[:a :b]} (find-routes :a :b 10 {:a {:b 4}})))
+    (is (= #{[:a :c][:a :b :c][:a :c :d :a :c][:a :c :d :a :b :c][:a :b :c :d :a :c]} (find-routes :a :c 24 {:a {:b 4 :c 3} :b {:c 8} :c {:d 6} :d {:a 2 :b 8}})))))
