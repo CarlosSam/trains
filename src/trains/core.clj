@@ -34,6 +34,7 @@
                                                     (keys (s d))))))))]
     (find-trips-acc [] start end max distances)))
 
+
 ; same as above but with exactly stops
 (defn find-trips-exactly [start end max distances]
   ; acc = stops s = start, e = end, m = max; d = distances
@@ -45,6 +46,7 @@
                         (map #(find-trips-acc (conj acc s) % e (dec m) d)
                              (keys (s d))))))]
     (find-trips-acc [] start end max distances)))
+
 
 ; returns the length of the shortest route
 (defn shortest-route [start end distances]
@@ -60,3 +62,16 @@
                 (when (seq subresults)
                    (apply min subresults)))))]
     (shortest-route-acc 0 start end distances)))
+
+; returns the routes with less than or equal max-distance
+(defn find-routes [start end max-distance distances]
+  ; acc = stops s = start, e = end, m = max; d = distances
+  (letfn [(find-routes-acc [acc s e m d]
+              (if (pos? m)
+                 (apply union (filter #(seq %)
+                                       (cons (when (= s e)
+                                                   #{(conj acc e)})
+                                             (map #(find-routes-acc (conj acc s) % e (- m (get-in d [s %])) d)
+                                                   (keys (s d))))))
+                 #{}))]
+    (find-routes-acc [] start end max-distance distances)))
