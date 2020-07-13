@@ -24,57 +24,57 @@
 ; maximum stops
 ; distances is the same as before
 (defn find-trips [start end max distances]
-  ; acc = stops s = start, e = end, m = max; d = distances
-  (letfn [(find-trips-acc [acc s e m d]
+  ; acc = stops s = start, m = max
+  (letfn [(find-trips-acc [acc s m]
               (apply union (filter #(seq %)
-                                   (cons (when (= s e)
-                                               #{(conj acc e)})
+                                   (cons (when (= s end)
+                                               #{(conj acc end)})
                                          (when (not= m 0)
-                                               (map #(find-trips-acc (conj acc s) % e (dec m) d)
-                                                    (keys (s d))))))))]
+                                               (map #(find-trips-acc (conj acc s) % (dec m))
+                                                    (keys (s distances))))))))]
     (set (remove #(= 1 (count %))
-                 (find-trips-acc [] start end max distances)))))
+                 (find-trips-acc [] start max)))))
 
 
 ; same as above but with exactly stops
 (defn find-trips-exactly [start end max distances]
-  ; acc = stops s = start, e = end, m = max; d = distances
-  (letfn [(find-trips-acc [acc s e m d]
+  ; acc = stops s = start, m = max
+  (letfn [(find-trips-acc [acc s m]
              (if (= m 0)
-                 (when (= s e)
-                       #{(conj acc e)})
+                 (when (= s end)
+                       #{(conj acc end)})
                  (apply union
-                        (map #(find-trips-acc (conj acc s) % e (dec m) d)
-                             (keys (s d))))))]
-    (find-trips-acc [] start end max distances)))
+                        (map #(find-trips-acc (conj acc s) % (dec m))
+                             (keys (s distances))))))]
+    (find-trips-acc [] start max)))
 
 
 ; returns the length of the shortest route
 (defn shortest-route [start end distances]
-  ; len: subtotal of length, s = start, e = end, d = distances
-  (letfn [(shortest-route-acc [len s e d]
+  ; len: subtotal of length, s = start, d = distances
+  (letfn [(shortest-route-acc [len s d]
             (when-let [next-cities (keys (s d))]
               (let [subresults (remove nil?
                                       (map #(when-let [inc-len (get-in d [s %])]
-                                                     (if (= % e)
+                                                     (if (= % end)
                                                          (+ len inc-len)
-                                                         (shortest-route-acc (+ len inc-len) % e (dissoc d s))))
+                                                         (shortest-route-acc (+ len inc-len) % (dissoc d s))))
                                            next-cities))]
                 (when (seq subresults)
                    (apply min subresults)))))]
-    (shortest-route-acc 0 start end distances)))
+    (shortest-route-acc 0 start distances)))
 
 
 ; returns the routes with less than max-distance
 (defn find-routes [start end max-distance distances]
-  ; acc = stops s = start, e = end, m = max; d = distances
-  (letfn [(find-routes-acc [acc s e m d]
+  ; acc = stops s = start, m = max
+  (letfn [(find-routes-acc [acc s m]
               (if (pos? m)
                  (apply union (filter #(seq %)
-                                       (cons (when (= s e)
-                                                   #{(conj acc e)})
-                                             (map #(find-routes-acc (conj acc s) % e (- m (get-in d [s %])) d)
-                                                   (keys (s d))))))
+                                       (cons (when (= s end)
+                                                   #{(conj acc end)})
+                                             (map #(find-routes-acc (conj acc s) % (- m (get-in distances [s %])))
+                                                   (keys (s distances))))))
                  #{}))]
     (set (remove #(= 1 (count %))
-                 (find-routes-acc [] start end max-distance distances)))))
+                 (find-routes-acc [] start max-distance)))))
